@@ -21,9 +21,11 @@ source /etc/mailinabox.conf # load global vars
 # These dependencies are from `apt-cache showpkg roundcube-core`.
 echo "Installing Roundcube (webmail)..."
 apt_install \
-	dbconfig-common \
-	php-cli php-sqlite3 php-intl php-json php-common php-curl php-ldap \
-	php-gd php-pspell tinymce libjs-jquery libjs-jquery-mousewheel libmagic1 php-mbstring
+	dbconfig-common php-cli php-sqlite3 php-intl php-json php-common php-curl php-ldap php-gd php-pspell libjs-jquery libjs-jquery-mousewheel \
+	libmagic1 php-mbstring aspell-doc libjs-requirejs libjs-jquery-ui-docs libaspell15 libjs-bootstrap libjs-bootstrap4 libjs-codemirror \
+	libjs-jquery-minicolors libjs-jquery-ui libjs-jstimezonedetect libjs-popper.js libjs-sizzle node-jquery php-auth-sasl php-gd php-intl \
+	php-mail-mime php-mbstring php-mysql php-net-sieve php-net-smtp php-net-socket php-pear php-pspell php-xml php7.4-gd \
+	php7.4-intl php7.4-mbstring php7.4-mysql php7.4-pspell php7.4-xml aspell aspell-en fonts-glyphicons-halflings libaspell15 libjs-bootstrap
 
 # Install Roundcube from source if it is not already present or if it is out of date.
 # Combine the Roundcube version number with the commit hash of plugins to track
