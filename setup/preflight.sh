@@ -7,14 +7,14 @@ if [[ $EUID -ne 0 ]]; then
 	exit 1
 fi
 
-# Check that we are running on Ubuntu 18.04 LTS (or 18.04.xx).
-if [ "$(lsb_release -d | sed 's/.*:\s*//' | sed 's/18\.04\.[0-9]/18.04/' )" != "Ubuntu 18.04 LTS" ]; then
-	echo "Mail-in-a-Box only supports being installed on Ubuntu 18.04, sorry. You are running:"
+# Check that we are running on Debian 10 or higher.
+if [ "$(lsb_release -i)" = "Debian" ] && [ "$(lsb_release -r)" -gt "9" ]; then
+	echo "Mail-in-a-Box only supports being installed on Ubuntu 16.04, sorry. You are running:"
 	echo
 	lsb_release -d | sed 's/.*:\s*//'
 	echo
 	echo "We can't write scripts that run on every possible setup, sorry."
-	exit 1
+	exit
 fi
 
 # Check that we have enough memory.
