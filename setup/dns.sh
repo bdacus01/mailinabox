@@ -7,7 +7,7 @@
 # the set of zones (domains) hosted by the server depends on the
 # mail users & aliases created by the user later.
 
-source setup/functions.sh # load our functions
+source setup/functions.sh   # load our functions
 source /etc/mailinabox.conf # load global vars
 
 # Install the packages.
@@ -22,7 +22,7 @@ apt_install nsd ldnsutils openssh-client
 
 mkdir -p /var/run/nsd
 
-cat > /etc/nsd/nsd.conf << EOF;
+cat >/etc/nsd/nsd.conf <<EOF
 # Do not edit. Overwritten by Mail-in-a-Box setup.
 server:
   hide-version: yes
@@ -43,7 +43,7 @@ server:
 EOF
 
 # Add log rotation
-cat > /etc/logrotate.d/nsd <<EOF;
+cat >/etc/logrotate.d/nsd <<EOF
 /var/log/nsd.log {
   weekly
   missingok
@@ -59,12 +59,12 @@ EOF
 # might have other network interfaces for e.g. tunnelling, we have
 # to be specific about the network interfaces that nsd binds to.
 for ip in $PRIVATE_IP $PRIVATE_IPV6; do
-	echo "  ip-address: $ip" >> /etc/nsd/nsd.conf;
+	echo "  ip-address: $ip" >>/etc/nsd/nsd.conf
 done
 
 # Create a directory for additional configuration directives, including
 # the zones.conf file written out by our management daemon.
-echo "include: /etc/nsd/nsd.conf.d/*.conf" >> /etc/nsd/nsd.conf;
+echo "include: /etc/nsd/nsd.conf.d/*.conf" >>/etc/nsd/nsd.conf
 
 # Remove the old location of zones.conf that we generate. It will
 # now be stored in /etc/nsd/nsd.conf.d.
@@ -72,7 +72,7 @@ rm -f /etc/nsd/zones.conf
 
 # Create DNSSEC signing keys.
 
-mkdir -p "$STORAGE_ROOT/dns/dnssec";
+mkdir -p "$STORAGE_ROOT/dns/dnssec"
 
 # TLDs, registrars, and validating nameservers don't all support the same algorithms,
 # so we'll generate keys using a few different algorithms so that dns_update.py can
@@ -83,50 +83,58 @@ mkdir -p "$STORAGE_ROOT/dns/dnssec";
 # keys on new systems.
 FIRST=1 #NODOC
 for algo in RSASHA256 ECDSAP256SHA256; do
-if [ ! -f "$STORAGE_ROOT/dns/dnssec/$algo.conf" ]; then
-	if [ $FIRST == 1 ]; then
-		echo "Generating DNSSEC signing keys..."
-		FIRST=0 #NODOC
-	fi
+	if [ ! -f "$STORAGE_ROOT/dns/dnssec/$algo.conf" ]; then
+		if [ $FIRST == 1 ]; then
+			echo "Generating DNSSEC signing keys..."
+			FIRST=0 #NODOC
+		fi
 
-	# Create the Key-Signing Key (KSK) (with `-k`) which is the so-called
-	# Secure Entry Point. The domain name we provide ("_domain_") doesn't
-	# matter -- we'll use the same keys for all our domains.
-	#
-	# `ldns-keygen` outputs the new key's filename to stdout, which
-	# we're capturing into the `KSK` variable.
-	#
-	# ldns-keygen uses /dev/random for generating random numbers by default.
-	# This is slow and unecessary if we ensure /dev/urandom is seeded properly,
-	# so we use /dev/urandom. See system.sh for an explanation. See #596, #115.
-	# (This previously used -b 2048 but it's unclear if this setting makes sense
-	# for non-RSA keys, so it's removed. The RSA-based keys are not recommended
-	# anymore anyway.)
-	KSK=$(umask 077; cd $STORAGE_ROOT/dns/dnssec; ldns-keygen -r /dev/urandom -a $algo -k _domain_);
+		# Create the Key-Signing Key (KSK) (with `-k`) which is the so-called
+		# Secure Entry Point. The domain name we provide ("_domain_") doesn't
+		# matter -- we'll use the same keys for all our domains.
+		#
+		# `ldns-keygen` outputs the new key's filename to stdout, which
+		# we're capturing into the `KSK` variable.
+		#
+		# ldns-keygen uses /dev/random for generating random numbers by default.
+		# This is slow and unecessary if we ensure /dev/urandom is seeded properly,
+		# so we use /dev/urandom. See system.sh for an explanation. See #596, #115.
+		# (This previously used -b 2048 but it's unclear if this setting makes sense
+		# for non-RSA keys, so it's removed. The RSA-based keys are not recommended
+		# anymore anyway.)
+		KSK=$(
+			umask 077
+			cd $STORAGE_ROOT/dns/dnssec
+			ldns-keygen -r /dev/urandom -a $algo -k _domain_
+		)
 
-	# Now create a Zone-Signing Key (ZSK) which is expected to be
-	# rotated more often than a KSK, although we have no plans to
-	# rotate it (and doing so would be difficult to do without
-	# disturbing DNS availability.) Omit `-k`.
-	# (This previously used -b 1024 but it's unclear if this setting makes sense
-	# for non-RSA keys, so it's removed.)
-	ZSK=$(umask 077; cd $STORAGE_ROOT/dns/dnssec; ldns-keygen -r /dev/urandom -a $algo _domain_);
+		# Now create a Zone-Signing Key (ZSK) which is expected to be
+		# rotated more often than a KSK, although we have no plans to
+		# rotate it (and doing so would be difficult to do without
+		# disturbing DNS availability.) Omit `-k`.
+		# (This previously used -b 1024 but it's unclear if this setting makes sense
+		# for non-RSA keys, so it's removed.)
+		ZSK=$(
+			umask 077
+			cd $STORAGE_ROOT/dns/dnssec
+			ldns-keygen -r /dev/urandom -a $algo _domain_
+		)
 
-	# These generate two sets of files like:
-	#
-	# * `K_domain_.+007+08882.ds`: DS record normally provided to domain name registrar (but it's actually invalid with `_domain_` so we don't use this file)
-	# * `K_domain_.+007+08882.key`: public key
-	# * `K_domain_.+007+08882.private`: private key (secret!)
+		# These generate two sets of files like:
+		#
+		# * `K_domain_.+007+08882.ds`: DS record normally provided to domain name registrar (but it's actually invalid with `_domain_` so we don't use this file)
+		# * `K_domain_.+007+08882.key`: public key
+		# * `K_domain_.+007+08882.private`: private key (secret!)
 
-	# The filenames are unpredictable and encode the key generation
-	# options. So we'll store the names of the files we just generated.
-	# We might have multiple keys down the road. This will identify
-	# what keys are the current keys.
-	cat > $STORAGE_ROOT/dns/dnssec/$algo.conf << EOF;
+		# The filenames are unpredictable and encode the key generation
+		# options. So we'll store the names of the files we just generated.
+		# We might have multiple keys down the road. This will identify
+		# what keys are the current keys.
+		cat >$STORAGE_ROOT/dns/dnssec/$algo.conf <<EOF
 KSK=$KSK
 ZSK=$ZSK
 EOF
-fi
+	fi
 
 	# And loop to do the next algorithm...
 done
@@ -134,7 +142,7 @@ done
 # Force the dns_update script to be run every day to re-sign zones for DNSSEC
 # before they expire. When we sign zones (in `dns_update.py`) we specify a
 # 30-day validation window, so we had better re-sign before then.
-cat > /etc/cron.daily/mailinabox-dnssec << EOF;
+cat >/etc/cron.daily/mailinabox-dnssec <<EOF
 #!/bin/bash
 # Mail-in-a-Box
 # Re-sign any DNS zones with DNSSEC because the signatures expire periodically.
@@ -145,4 +153,3 @@ chmod +x /etc/cron.daily/mailinabox-dnssec
 # Permit DNS queries on TCP/UDP in the firewall.
 
 ufw_allow domain
-

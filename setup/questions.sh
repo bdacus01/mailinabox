@@ -9,7 +9,7 @@ if [ -z "${NONINTERACTIVE:-}" ]; then
 	if [ ! -f /usr/bin/dialog ] || [ ! -f /usr/bin/python3 ] || [ ! -f /usr/bin/pip3 ]; then
 		echo Installing packages needed for setup...
 		apt-get -q -q update
-		apt_get_quiet install dialog python3 python3-pip  || exit 1
+		apt_get_quiet install dialog python3 python3-pip || exit 1
 	fi
 
 	# Installing email_validator is repeated in setup/management.sh, but in setup/management.sh
@@ -36,7 +36,7 @@ if [ -z "${PRIMARY_HOSTNAME:-}" ]; then
 		# This is the first run. Ask the user for his email address so we can
 		# provide the best default for the box's hostname.
 		input_box "Your Email Address" \
-"What email address are you setting this box up to manage?
+			"What email address are you setting this box up to manage?
 \n\nThe part after the @-sign must be a domain name or subdomain
 that you control. You can add other email addresses to this
 box later (including email addresses on other domain names
@@ -51,8 +51,7 @@ you really want.
 			# user hit ESC/cancel
 			exit
 		fi
-		while ! python3 management/mailconfig.py validate-email "$EMAIL_ADDR"
-		do
+		while ! python3 management/mailconfig.py validate-email "$EMAIL_ADDR"; do
 			input_box "Your Email Address" \
 				"That's not a valid email address.\n\nWhat email address are you setting this box up to manage?" \
 				$EMAIL_ADDR \
@@ -69,7 +68,7 @@ you really want.
 	fi
 
 	input_box "Hostname" \
-"This box needs a name, called a 'hostname'. The name will form a part of the box's web address.
+		"This box needs a name, called a 'hostname'. The name will form a part of the box's web address.
 \n\nWe recommend that the name be a subdomain of the domain in your email
 address, so we're suggesting $DEFAULT_PRIMARY_HOSTNAME.
 \n\nYou can change it, but we recommend you don't.

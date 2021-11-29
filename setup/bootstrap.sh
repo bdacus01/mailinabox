@@ -18,23 +18,14 @@ if [ -z "$TAG" ]; then
 	# space, but if we put it in a comment it would confuse the status checks!)
 	# to get the latest version, so the first such line must be the one that we
 	# want to display in status checks.
-	if [ "$(lsb_release -d | sed 's/.*:\s*//' | sed 's/18\.04\.[0-9]/18.04/' )" == "Ubuntu 18.04 LTS" ]; then
-		# This machine is running Ubuntu 18.04.
-		TAG=v55
-
-	elif [ "$(lsb_release -d | sed 's/.*:\s*//' | sed 's/14\.04\.[0-9]/14.04/' )" == "Ubuntu 14.04 LTS" ]; then
-		# This machine is running Ubuntu 14.04.
-		echo "You are installing the last version of Mail-in-a-Box that will"
-		echo "support Ubuntu 14.04. If this is a new installation of Mail-in-a-Box,"
-		echo "stop now and switch to a machine running Ubuntu 18.04. If you are"
-		echo "upgrading an existing Mail-in-a-Box --- great. After upgrading this"
-		echo "box, please visit https://mailinabox.email for notes on how to upgrade"
-		echo "to Ubuntu 18.04."
-		echo ""
-		TAG=v0.30
-
+	# Check that we are running on Debian 10 or higher.
+	if [ "$(lsb_release -i)" = "Debian" ] && [ "$(lsb_release -r)" -gt "9" ]; then
+		echo "Mail-in-a-Box only supports being installed on Debian, sorry. You are running:"
+		echo
+		lsb_release -d | sed 's/.*:\s*//'
+		echo
 	else
-		echo "This script must be run on a system running Ubuntu 18.04 or Ubuntu 14.04."
+		echo "This script must be run on a system running Debian 10 or higher."
 		exit 1
 	fi
 fi
@@ -50,16 +41,16 @@ if [ ! -d $HOME/mailinabox ]; then
 	if [ ! -f /usr/bin/git ]; then
 		echo Installing git . . .
 		apt-get -q -q update
-		DEBIAN_FRONTEND=noninteractive apt-get -q -q install -y git < /dev/null
+		DEBIAN_FRONTEND=noninteractive apt-get -q -q install -y git </dev/null
 		echo
 	fi
 
-	echo Downloading Mail-in-a-Box $TAG. . .
+	echo Downloading Mail-in-a-Box. . .
 	git clone \
-		-b $TAG --depth 1 \
-		https://github.com/mail-in-a-box/mailinabox \
+		--depth 1 \
+		https://github.com/bdacus01/mailinabox \
 		$HOME/mailinabox \
-		< /dev/null 2> /dev/null
+		</dev/null 2>/dev/null
 
 	echo
 fi
@@ -69,8 +60,8 @@ cd $HOME/mailinabox
 
 # Update it.
 if [ "$TAG" != $(git describe) ]; then
-	echo Updating Mail-in-a-Box to $TAG . . .
-	git fetch --depth 1 --force --prune origin tag $TAG
+	echo Updating Mail-in-a-Box to . . .
+	git fetch --depth 1 --force --prune origin
 	if ! git checkout -q $TAG; then
 		echo "Update failed. Did you modify something in $(pwd)?"
 		exit 1
@@ -80,4 +71,3 @@ fi
 
 # Start setup script.
 setup/start.sh
-

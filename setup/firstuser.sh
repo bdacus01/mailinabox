@@ -17,8 +17,7 @@ if [ -z "$(management/cli.py user)" ]; then
 				# user hit ESC/cancel
 				exit
 			fi
-			while ! management/mailconfig.py validate-email "$EMAIL_ADDR"
-			do
+			while ! management/mailconfig.py validate-email "$EMAIL_ADDR"; do
 				input_box "Mail Account" \
 					"That's not a valid email address.
 					\n\nWhat email address do you want?" \
@@ -53,5 +52,5 @@ if [ -z "$(management/cli.py user)" ]; then
 	hide_output management/cli.py user make-admin $EMAIL_ADDR
 
 	# Create an alias to which we'll direct all automatically-created administrative aliases.
-	management/cli.py alias add administrator@$PRIMARY_HOSTNAME $EMAIL_ADDR > /dev/null
+	management/cli.py alias add administrator@$PRIMARY_HOSTNAME $EMAIL_ADDR >/dev/null
 fi

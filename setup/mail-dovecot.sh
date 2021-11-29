@@ -15,9 +15,8 @@
 # to Spamassassin which in turn hands it off to Dovecot. This all happens
 # using the LMTP protocol.
 
-source setup/functions.sh # load our functions
+source setup/functions.sh   # load our functions
 source /etc/mailinabox.conf # load global vars
-
 
 # Install packages for dovecot. These are all core dovecot plugins,
 # but dovecot-lucene is packaged by *us* in the Mail-in-a-Box PPA,
@@ -46,7 +45,7 @@ apt_install \
 # - https://www.dovecot.org/list/dovecot/2011-December/132455.html
 tools/editconf.py /etc/dovecot/conf.d/10-master.conf \
 	default_process_limit=$(echo "$(nproc) * 250" | bc) \
-	default_vsz_limit=$(echo "$(free -tm  | tail -1 | awk '{print $2}') / 3" | bc)M \
+	default_vsz_limit=$(echo "$(free -tm | tail -1 | awk '{print $2}') / 3" | bc)M \
 	log_path=/var/log/mail.log
 
 # The inotify `max_user_instances` default is 128, which constrains
@@ -123,7 +122,7 @@ tools/editconf.py /etc/dovecot/conf.d/20-pop3.conf \
 #
 # Also increase the number of allowed IMAP connections per mailbox because
 # we all have so many devices lately.
-cat > /etc/dovecot/conf.d/99-local.conf << EOF;
+cat >/etc/dovecot/conf.d/99-local.conf <<EOF
 service lmtp {
   #unix_listener /var/spool/postfix/private/dovecot-lmtp {
   #  user = postfix
@@ -176,7 +175,7 @@ sed -i "s/#mail_plugins = .*/mail_plugins = \$mail_plugins sieve/" /etc/dovecot/
 # (because then I suppose it might appear to the user as one of their scripts).
 # * `sieve_dir`: Directory for :personal include scripts for the include extension. This
 # is also where the ManageSieve service stores the user's scripts.
-cat > /etc/dovecot/conf.d/99-local-sieve.conf << EOF;
+cat >/etc/dovecot/conf.d/99-local-sieve.conf <<EOF
 plugin {
   sieve_before = /etc/dovecot/sieve-spam.sieve
   sieve_before2 = $STORAGE_ROOT/mail/sieve/global_before

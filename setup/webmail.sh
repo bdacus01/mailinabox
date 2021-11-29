@@ -2,7 +2,7 @@
 # Webmail with Roundcube
 # ----------------------
 
-source setup/functions.sh # load our functions
+source setup/functions.sh   # load our functions
 source /etc/mailinabox.conf # load global vars
 
 # ### Installing Roundcube
@@ -52,12 +52,12 @@ elif [[ "$UPDATE_KEY" != $(cat /usr/local/lib/roundcubemail/version) ]]; then
 	needs_update=1 #NODOC
 fi
 if [ $needs_update == 1 ]; then
-  # if upgrading from 1.3.x, clear the temp_dir
-  if [ -f /usr/local/lib/roundcubemail/version ]; then
-    if [ "$(cat /usr/local/lib/roundcubemail/version | cut -c1-3)" == '1.3' ]; then
-      find /var/tmp/roundcubemail/ -type f ! -name 'RCMTEMP*' -delete
-    fi
-  fi
+	# if upgrading from 1.3.x, clear the temp_dir
+	if [ -f /usr/local/lib/roundcubemail/version ]; then
+		if [ "$(cat /usr/local/lib/roundcubemail/version | cut -c1-3)" == '1.3' ]; then
+			find /var/tmp/roundcubemail/ -type f ! -name 'RCMTEMP*' -delete
+		fi
+	fi
 
 	# install roundcube
 	wget_verify \
@@ -86,7 +86,7 @@ if [ $needs_update == 1 ]; then
 	rm -f /tmp/carddav.zip
 
 	# record the version we've installed
-	echo $UPDATE_KEY > ${RCM_DIR}/version
+	echo $UPDATE_KEY >${RCM_DIR}/version
 fi
 
 # ### Configuring Roundcube
@@ -100,7 +100,7 @@ SECRET_KEY=$(dd if=/dev/urandom bs=1 count=32 2>/dev/null | base64 | sed s/=//g)
 # For security, temp and log files are not stored in the default locations
 # which are inside the roundcube sources directory. We put them instead
 # in normal places.
-cat > $RCM_CONFIG <<EOF;
+cat >$RCM_CONFIG <<EOF
 <?php
 /*
  * Do not edit. Written by Mail-in-a-Box. Regenerated on updates.
@@ -139,7 +139,7 @@ cat > $RCM_CONFIG <<EOF;
 EOF
 
 # Configure CardDav
-cat > ${RCM_PLUGIN_DIR}/carddav/config.inc.php <<EOF;
+cat >${RCM_PLUGIN_DIR}/carddav/config.inc.php <<EOF
 <?php
 /* Do not edit. Written by Mail-in-a-Box. Regenerated on updates. */
 \$prefs['_GLOBAL']['hide_preferences'] = true;
