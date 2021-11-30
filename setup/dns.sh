@@ -21,6 +21,7 @@ apt_install nsd ldnsutils openssh-client
 # Prepare nsd's configuration.
 
 mkdir -p /var/run/nsd
+mkdir -p /etc/nsd/zones
 
 cat >/etc/nsd/nsd.conf <<EOF
 # Do not edit. Overwritten by Mail-in-a-Box setup.
