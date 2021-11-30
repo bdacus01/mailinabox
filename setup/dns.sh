@@ -43,6 +43,9 @@ server:
 
 EOF
 
+chown -R nsd:nsd /var/run/nsd
+chown -R nsd:nsd /etc/nsd
+
 # Add log rotation
 cat >/etc/logrotate.d/nsd <<EOF
 /var/log/nsd.log {
