@@ -14,7 +14,7 @@ echo "Installing Mail-in-a-Box system management daemon..."
 # first. Once acme is installed by an apt package, this might
 # break the package version and `apt-get install --reinstall python3-acme`
 # might be needed in that case.
-while [ -d /usr/local/lib/python3.4/dist-packages/acme ]; do
+while [ -d /usr/local/lib/python3.9/dist-packages/acme ]; do
 	pip3 uninstall -y acme;
 done
 
@@ -25,29 +25,29 @@ done
 #
 # certbot installs EFF's certbot which we use to
 # provision free TLS certificates.
-apt_install duplicity python3-pip virtualenv certbot
+apt_install duplicity python3-pip virtualenv certbot 
 
 # b2sdk is used for backblaze backups.
 # boto is used for amazon aws backups.
 # Both are installed outside the pipenv, so they can be used by duplicity
-hide_output pip3 install --upgrade b2sdk boto
+#hide_output pip3 install --upgrade b2sdk boto
 
 # Create a virtualenv for the installation of Python 3 packages
 # used by the management daemon.
-inst_dir=/usr/local/lib/mailinabox
-mkdir -p $inst_dir
-venv=$inst_dir/env
-if [ ! -d $venv ]; then
-	hide_output virtualenv -ppython3 $venv
-fi
+#inst_dir=/usr/local/lib/mailinabox
+#mkdir -p $inst_dir
+#venv=$inst_dir/env
+#if [ ! -d $venv ]; then
+#	hide_output virtualenv -ppython3 $venv
+#fi
 
 # Upgrade pip because the Ubuntu-packaged version is out of date.
-hide_output $venv/bin/pip install --upgrade pip
+#hide_output $venv/bin/pip install --upgrade pip
 
 # Install other Python 3 packages used by the management daemon.
 # The first line is the packages that Josh maintains himself!
 # NOTE: email_validator is repeated in setup/questions.sh, so please keep the versions synced.
-hide_output $venv/bin/pip install --upgrade \
+hide_output pip3 install --upgrade \
 	rtyaml "email_validator>=1.0.0" "exclusiveprocess" \
 	flask dnspython python-dateutil expiringdict \
 	qrcode[pil] pyotp \
