@@ -15,7 +15,7 @@ echo "Installing Mail-in-a-Box system management daemon..."
 # break the package version and `apt-get install --reinstall python3-acme`
 # might be needed in that case.
 while [ -d /usr/local/lib/python3.9/dist-packages/acme ]; do
-	pip3 uninstall -y acme;
+	pip3 uninstall -y acme
 done
 
 # duplicity is used to make backups of user data.
@@ -25,7 +25,7 @@ done
 #
 # certbot installs EFF's certbot which we use to
 # provision free TLS certificates.
-apt_install duplicity python3-pip virtualenv certbot 
+apt_install duplicity python3-pip virtualenv certbot
 
 # b2sdk is used for backblaze backups.
 # boto is used for amazon aws backups.
@@ -41,9 +41,6 @@ if [ ! -d $venv ]; then
 	hide_output virtualenv -ppython3 $venv
 fi
 
-# Upgrade pip because the Ubuntu-packaged version is out of date.
-#hide_output $venv/bin/pip install --upgrade pip
-
 # Install other Python 3 packages used by the management daemon.
 # The first line is the packages that Josh maintains himself!
 # NOTE: email_validator is repeated in setup/questions.sh, so please keep the versions synced.
@@ -58,9 +55,9 @@ hide_output pip3 install --upgrade \
 # Create a backup directory and a random key for encrypting backups.
 mkdir -p $STORAGE_ROOT/backup
 if [ ! -f $STORAGE_ROOT/backup/secret_key.txt ]; then
-	$(umask 077; openssl rand -base64 2048 > $STORAGE_ROOT/backup/secret_key.txt)
+	umask 077
+	openssl rand -base64 2048 >$STORAGE_ROOT/backup/secret_key.txt
 fi
-
 
 # Download jQuery and Bootstrap local files
 
@@ -70,11 +67,13 @@ rm -rf $assets_dir
 mkdir -p $assets_dir
 
 # jQuery CDN URL
-jquery_version=2.1.4
+#jquery_version=2.1.4
+jquery_version=3.6.0
 jquery_url=https://code.jquery.com
 
 # Get jQuery
-wget_verify $jquery_url/jquery-$jquery_version.min.js 43dc554608df885a59ddeece1598c6ace434d747 $assets_dir/jquery.min.js
+wget_verify $jquery_url/jquery-$jquery_version.min.js xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej $assets_dir/jquery.min.js
+#43dc554608df885a59ddeece1598c6ace434d747 
 
 # Bootstrap CDN URL
 bootstrap_version=3.3.7
@@ -88,7 +87,7 @@ rm -f /tmp/bootstrap.zip
 
 # Create an init script to start the management daemon and keep it
 # running after a reboot.
-cat > $inst_dir/start <<EOF;
+cat >$inst_dir/start <<EOF
 #!/bin/bash
 # Set character encoding flags to ensure that any non-ASCII don't cause problems.
 export LANGUAGE=en_US.UTF-8
@@ -108,8 +107,8 @@ hide_output systemctl enable mailinabox.service
 # Perform nightly tasks at 3am in system time: take a backup, run
 # status checks and email the administrator any changes.
 
-minute=$((RANDOM % 60))  # avoid overloading mailinabox.email
-cat > /etc/cron.d/mailinabox-nightly << EOF;
+minute=$((RANDOM % 60)) # avoid overloading mailinabox.email
+cat >/etc/cron.d/mailinabox-nightly <<EOF
 # Mail-in-a-Box --- Do not edit / will be overwritten on update.
 # Run nightly tasks: backup, status checks.
 $minute 3 * * *	root	(cd $(pwd) && management/daily_tasks.sh)
