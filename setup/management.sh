@@ -15,7 +15,7 @@ echo "Installing Mail-in-a-Box system management daemon..."
 # break the package version and `apt-get install --reinstall python3-acme`
 # might be needed in that case.
 while [ -d /usr/local/lib/python3.9/dist-packages/acme ]; do
-	pip3 uninstall -y acme
+	pip3 uninstall -y acme boto
 done
 
 # duplicity is used to make backups of user data.
@@ -25,12 +25,12 @@ done
 #
 # certbot installs EFF's certbot which we use to
 # provision free TLS certificates.
-apt_install duplicity python3-pip virtualenv certbot
+apt_install duplicity librsync2 python3-fasteners python3-pip virtualenv certbot
 
 # b2sdk is used for backblaze backups.
-# boto is used for amazon aws backups.
+# boto3 is used for amazon aws backups. Debians Boto3 is to old.
 # Both are installed outside the pipenv, so they can be used by duplicity
-#hide_output pip3 install --upgrade b2sdk boto
+hide_output pip3 install --upgrade b2sdk boto3
 
 # Create a virtualenv for the installation of Python 3 packages
 # used by the management daemon.
@@ -47,8 +47,8 @@ fi
 hide_output pip3 install --upgrade \
 	rtyaml email_validator exclusiveprocess \
 	flask dnspython python-dateutil expiringdict \
-	qrcode[pil] pyotp \
-	idna cryptography boto psutil postfix-mta-sts-resolver b2sdk
+	qrcode[pil] pyotp idna cryptography boto3 \
+	psutil postfix-mta-sts-resolver b2sdk
 
 # CONFIGURATION
 
