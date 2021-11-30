@@ -133,16 +133,8 @@ apt_get_quiet autoremove
 echo Installing system packages...
 apt_install python3 python3-dev python3-pip python3-setuptools \
 	netcat-openbsd wget curl git sudo coreutils bc \
-	haveged pollinate openssh-client unzip \
-	unattended-upgrades cron ntp fail2ban rsyslog
-
-# ### Suppress Upgrade Prompts
-# When Ubuntu 20 comes out, we don't want users to be prompted to upgrade,
-# because we don't yet support it.
-if [ -f /etc/update-manager/release-upgrades ]; then
-	tools/editconf.py /etc/update-manager/release-upgrades Prompt=never
-	rm -f /var/lib/ubuntu-release-upgrader/release-upgrade-available
-fi
+	haveged openssh-client unzip \
+	unattended-upgrades cron ntp fail2ban rsyslog htop
 
 # ### Set the system timezone
 #
@@ -223,14 +215,6 @@ fi
 
 echo Initializing system random number generator...
 dd if=/dev/random of=/dev/urandom bs=1 count=32 2> /dev/null
-
-# This is supposedly sufficient. But because we're not sure if hardware entropy
-# is really any good on virtualized systems, we'll also seed from Ubuntu's
-# pollinate servers:
-
-pollinate  -q -r
-
-# Between these two, we really ought to be all set.
 
 # We need an ssh key to store backups via rsync, if it doesn't exist create one
 if [ ! -f /root/.ssh/id_rsa_miab ]; then
