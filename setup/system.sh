@@ -87,16 +87,6 @@ if [ ! -f /usr/bin/add-apt-repository ]; then
 	apt_install software-properties-common
 fi
 
-# Ensure the universe repository is enabled since some of our packages
-# come from there and minimal Ubuntu installs may have it turned off.
-#hide_output add-apt-repository -y universe
-
-# Install the certbot PPA.
-#hide_output add-apt-repository -y ppa:certbot/certbot
-
-# Install the duplicity PPA.
-#hide_output add-apt-repository -y ppa:duplicity-team/duplicity-release-git
-
 # ### Update Packages
 
 # Update system packages to make sure we have the latest upstream versions
@@ -133,9 +123,9 @@ apt_get_quiet autoremove
 
 echo Installing system packages...
 apt_install python3 python3-dev python3-pip python3-setuptools \
-	netcat-openbsd wget curl git sudo coreutils bc \
-	haveged openssh-client unzip \
-	unattended-upgrades cron ntp fail2ban rsyslog htop
+	netcat-openbsd wget curl git sudo coreutils bc haveged \
+	openssh-client unzip unattended-upgrades cron ntp fail2ban \
+	rsyslog htop
 
 # ### Set the system timezone
 #

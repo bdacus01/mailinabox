@@ -19,7 +19,7 @@ while [ -d /usr/local/lib/python3.9/dist-packages/acme ]; do
 done
 
 # duplicity is used to make backups of user data.
-#
+# Duplicity supports Python 2.7, or 3.5 to 3.9 now.
 # virtualenv is used to isolate the Python 3 packages we
 # install via pip from the system-installed packages.
 #
