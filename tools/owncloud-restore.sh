@@ -45,5 +45,5 @@ chown www-data.www-data $STORAGE_ROOT/owncloud/config.php
 
 sudo -u www-data php /usr/local/lib/owncloud/occ maintenance:mode --off
 
-service php7.2-fpm start
+service php7.4-fpm start
 echo "Done"
