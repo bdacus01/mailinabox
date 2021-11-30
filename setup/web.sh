@@ -85,14 +85,16 @@ then
                 pm.max_children=60 \
                 pm.start_servers=6 \
                 pm.min_spare_servers=3 \
-                pm.max_spare_servers=9
+                pm.max_spare_servers=9 \
+                pm.max_requests = 500
 else
         tools/editconf.py /etc/php/7.4/fpm/pool.d/www.conf -c ';' \
                 pm=dynamic \
                 pm.max_children=120 \
                 pm.start_servers=12 \
                 pm.min_spare_servers=6 \
-                pm.max_spare_servers=18
+                pm.max_spare_servers=18 \
+                pm.max_requests = 1000
 fi
 
 # Other nginx settings will be configured by the management service

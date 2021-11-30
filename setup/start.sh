@@ -116,7 +116,7 @@ source setup/munin.sh
 # Wait for the management daemon to start...
 until nc -z -w 4 127.0.0.1 10222
 do
-	echo Waiting for the Mail-in-a-Box management daemon to start...
+	echo "Waiting for the Mail-in-a-Box management daemon to start..."
 	sleep 2
 done
 

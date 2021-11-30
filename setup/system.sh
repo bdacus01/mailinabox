@@ -293,7 +293,7 @@ fi #NODOC
 # DNS server, which won't work for RBLs. So we really need a local recursive
 # nameserver.
 #
-# We'll install `bind9`, which as packaged for Ubuntu, has DNSSEC enabled by default via "dnssec-validation auto".
+# We'll install `bind9`, which as packaged for Debian, has DNSSEC enabled by default via "dnssec-validation auto".
 # We'll have it be bound to 127.0.0.1 so that it does not interfere with
 # the public, recursive nameserver `nsd` bound to the public ethernet interfaces.
 #
