@@ -9,7 +9,7 @@ source /etc/mailinabox.conf # load global vars
 
 echo "Installing Nextcloud (contacts/calendar)..."
 
-apt-get purge -qq -y owncloud* 
+#apt-get purge -qq -y owncloud* 
 # we used to use the package manager
 
 apt_install php php-fpm \
