@@ -72,7 +72,7 @@ jquery_version=3.6.0
 jquery_url=https://code.jquery.com
 
 # Get jQuery
-wget_verify $jquery_url/jquery-$jquery_version.min.js xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej $assets_dir/jquery.min.js
+wget_verify $jquery_url/jquery-$jquery_version.min.js b82d238d4e31fdf618bae8ac11a6c812c03dd0d4 $assets_dir/jquery.min.js
 #43dc554608df885a59ddeece1598c6ace434d747 
 
 # Bootstrap CDN URL
