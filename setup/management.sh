@@ -34,12 +34,12 @@ apt_install duplicity python3-pip virtualenv certbot
 
 # Create a virtualenv for the installation of Python 3 packages
 # used by the management daemon.
-#inst_dir=/usr/local/lib/mailinabox
-#mkdir -p $inst_dir
-#venv=$inst_dir/env
-#if [ ! -d $venv ]; then
-#	hide_output virtualenv -ppython3 $venv
-#fi
+inst_dir=/usr/local/lib/mailinabox
+mkdir -p $inst_dir
+venv=$inst_dir/env
+if [ ! -d $venv ]; then
+	hide_output virtualenv -ppython3 $venv
+fi
 
 # Upgrade pip because the Ubuntu-packaged version is out of date.
 #hide_output $venv/bin/pip install --upgrade pip
