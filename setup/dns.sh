@@ -26,12 +26,13 @@ mkdir -p /etc/nsd/zones
 cat >/etc/nsd/nsd.conf <<EOF
 # Do not edit. Overwritten by Mail-in-a-Box setup.
 server:
-  hide-version: yes
-  logfile: "/var/log/nsd.log"
-
+  server-count: 4
+  username: nsd
+	logfile: "/var/log/nsd.log"
+	pidfile: "/var/run/nsd.pid"
+	hide-version: yes
   # identify the server (CH TXT ID.SERVER entry).
   identity: ""
-
   # The directory for zonefile: files.
   zonesdir: "/etc/nsd/zones"
 
