@@ -33,7 +33,6 @@ if [ -z "${PRIMARY_HOSTNAME:-}" ]; then
 		# We strip the string "box." from the hostname to get the mail
 		# domain. If the hostname differs, nothing happens here.
 		DEFAULT_DOMAIN_GUESS=$(echo $(get_default_dominname))
-		PRIMARY_DOMAINAME=$(echo $(get_default_dominname)
 		# This is the first run. Ask the user for his email address so we can
 		# provide the best default for the box's hostname.
 		input_box "Your Email Address" \
@@ -183,7 +182,9 @@ fi
 if [ "$PRIMARY_HOSTNAME" = "auto" ]; then
 	PRIMARY_HOSTNAME=$(get_default_hostname)
 fi
-
+if [ "$PRIMARY_DOMAINNAME" = "auto" ]; then
+	PRIMARY_DOMAINNAME=$(get_default_domainname)
+fi
 # Set STORAGE_USER and STORAGE_ROOT to default values (user-data and /home/user-data), unless
 # we've already got those values from a previous run.
 if [ -z "${STORAGE_USER:-}" ]; then
