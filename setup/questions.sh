@@ -64,7 +64,7 @@ you really want.
 
 		# Take the part after the @-sign as the user's domain name, and add
 		# 'box.' to the beginning to create a default hostname for this machine.
-		DEFAULT_PRIMARY_HOSTNAME=mx.$(echo $EMAIL_ADDR | sed 's/.*@//')
+		DEFAULT_PRIMARY_HOSTNAME=mx.$DEFAULT_DOMAIN_GUESS
 	fi
 
 	input_box "Hostname" \
@@ -80,7 +80,6 @@ address, so we're suggesting $DEFAULT_PRIMARY_HOSTNAME.
 		# user hit ESC/cancel
 		exit
 	fi
-fi
 
 	input_box "Domainname" \
 		"This box needs a Domain name. The name will form a part of the box's web address.
@@ -95,7 +94,7 @@ address, so we're suggesting $DEFAULT_DOMAIN_GUESS.
 		# user hit ESC/cancel
 		exit
 	fi
-
+fi
 # If the machine is behind a NAT, inside a VM, etc., it may not know
 # its IP address on the public network / the Internet. Ask the Internet
 # and possibly confirm with user.
