@@ -2113,7 +2113,7 @@ components:
           type: array
           items:
             type: string
-            example: ns1.example.com
+            example: dns1.example.com
       description: Secondary nameserver/s response.
     DNSCustomRecordRemoveResponse:
       type: string

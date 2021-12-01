@@ -408,26 +408,26 @@ def check_primary_hostname_dns(domain, env, output, dns_domains, dns_zonefiles):
 				check_dnssec(zone, env, output, dns_zonefiles, is_checking_primary=True)
 
 	ip = query_dns(domain, "A")
-	ns_ips = query_dns("ns1." + domain, "A") + '/' + query_dns("ns2." + domain, "A")
+	ns_ips = query_dns("dns1." + domain, "A") + '/' + query_dns("dns2." + domain, "A")
 	my_ips = env['PUBLIC_IP'] + ((" / "+env['PUBLIC_IPV6']) if env.get("PUBLIC_IPV6") else "")
 
-	# Check that the ns1/ns2 hostnames resolve to A records. This information probably
+	# Check that the dns1/dns2 hostnames resolve to A records. This information probably
 	# comes from the TLD since the information is set at the registrar as glue records.
 	# We're probably not actually checking that here but instead checking that we, as
 	# the nameserver, are reporting the right info --- but if the glue is incorrect this
 	# will probably fail.
 	if ns_ips == env['PUBLIC_IP'] + '/' + env['PUBLIC_IP']:
-		output.print_ok("Nameserver glue records are correct at registrar. [ns1/ns2.%s ↦ %s]" % (env['PRIMARY_HOSTNAME'], env['PUBLIC_IP']))
+		output.print_ok("Nameserver glue records are correct at registrar. [dns1/dns2.%s ↦ %s]" % (env['PRIMARY_HOSTNAME'], env['PUBLIC_IP']))
 
 	elif ip == env['PUBLIC_IP']:
 		# The NS records are not what we expect, but the domain resolves correctly, so
 		# the user may have set up external DNS. List this discrepancy as a warning.
-		output.print_warning("""Nameserver glue records (ns1.%s and ns2.%s) should be configured at your domain name
+		output.print_warning("""Nameserver glue records (dns1.%s and dns2.%s) should be configured at your domain name
 			registrar as having the IP address of this box (%s). They currently report addresses of %s. If you have set up External DNS, this may be OK."""
 			% (env['PRIMARY_HOSTNAME'], env['PRIMARY_HOSTNAME'], env['PUBLIC_IP'], ns_ips))
 
 	else:
-		output.print_error("""Nameserver glue records are incorrect. The ns1.%s and ns2.%s nameservers must be configured at your domain name
+		output.print_error("""Nameserver glue records are incorrect. The dns1.%s and dns2.%s nameservers must be configured at your domain name
 			registrar as having the IP address %s. They currently report addresses of %s. It may take several hours for
 			public DNS to update after a change."""
 			% (env['PRIMARY_HOSTNAME'], env['PRIMARY_HOSTNAME'], env['PUBLIC_IP'], ns_ips))
@@ -502,10 +502,10 @@ def check_dns_zone(domain, env, output, dns_zonefiles):
 	custom_dns_records = list(get_custom_dns_config(env)) # generator => list so we can reuse it
 	correct_ip = "; ".join(sorted(get_custom_dns_records(custom_dns_records, domain, "A"))) or env['PUBLIC_IP']
 	custom_secondary_ns = get_secondary_dns(custom_dns_records, mode="NS")
-	secondary_ns = custom_secondary_ns or ["ns2." + env['PRIMARY_HOSTNAME']]
+	secondary_ns = custom_secondary_ns or ["dns2." + env['PRIMARY_HOSTNAME']]
 
 	existing_ns = query_dns(domain, "NS")
-	correct_ns = "; ".join(sorted(["ns1." + env['PRIMARY_HOSTNAME']] + secondary_ns))
+	correct_ns = "; ".join(sorted(["dns1." + env['PRIMARY_HOSTNAME']] + secondary_ns))
 	ip = query_dns(domain, "A")
 
 	probably_external_dns = False

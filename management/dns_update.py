@@ -136,9 +136,9 @@ def build_zones(env):
 	auto_domains = web_domains - set(get_web_domains(env, include_auto=False))
 	domains |= auto_domains # www redirects not included in the initial list, see above
 
-	# Add ns1/ns2+PRIMARY_HOSTNAME which must also have A/AAAA records
+	# Add dns1/dns2+PRIMARY_HOSTNAME which must also have A/AAAA records
 	# when the box is acting as authoritative DNS server for its domains.
-	for ns in ("ns1", "ns2"):
+	for ns in ("dns1", "dns2"):
 		d = ns + "." + env["PRIMARY_HOSTNAME"]
 		domains.add(d)
 		auto_domains.add(d)
@@ -178,13 +178,13 @@ def build_zone(domain, domain_properties, additional_records, env, is_zone=True)
 	# 'False' in the tuple indicates these records would not be used if the zone
 	# is managed outside of the box.
 	if is_zone:
-		# Obligatory NS record to ns1.PRIMARY_HOSTNAME.
-		records.append((None,  "NS",  "ns1.%s." % env["PRIMARY_HOSTNAME"], False))
+		# Obligatory NS record to dns1.PRIMARY_HOSTNAME.
+		records.append((None,  "NS",  "dns1.%s." % env["PRIMARY_HOSTNAME"], False))
 
 		# NS record to ns2.PRIMARY_HOSTNAME or whatever the user overrides.
 		# User may provide one or more additional nameservers
 		secondary_ns_list = get_secondary_dns(additional_records, mode="NS") \
-			or ["ns2." + env["PRIMARY_HOSTNAME"]]
+			or ["dns2." + env["PRIMARY_HOSTNAME"]]
 		for secondary_ns in secondary_ns_list:
 			records.append((None,  "NS", secondary_ns+'.', False))
 
@@ -253,7 +253,7 @@ def build_zone(domain, domain_properties, additional_records, env, is_zone=True)
 	has_rec_base = list(records)
 	a_expl = "Required. May have a different value. Sets the IP address that %s resolves to for web hosting and other services besides mail. The A record must be present but its value does not affect mail delivery." % domain
 	if domain_properties[domain]["auto"]:
-		if domain.startswith("ns1.") or domain.startswith("ns2."): a_expl = False # omit from 'External DNS' page since this only applies if box is its own DNS server
+		if domain.startswith("dns1.") or domain.startswith("dns2."): a_expl = False # omit from 'External DNS' page since this only applies if box is its own DNS server
 		if domain.startswith("www."): a_expl = "Optional. Sets the IP address that %s resolves to so that the box can provide a redirect to the parent domain." % domain
 		if domain.startswith("mta-sts."): a_expl = "Optional. MTA-STS Policy Host serving /.well-known/mta-sts.txt."
 		if domain.startswith("autoconfig."): a_expl = "Provides email configuration autodiscovery support for Thunderbird Autoconfig."
@@ -494,7 +494,7 @@ def write_nsd_zone(domain, zonefile, records, env, force):
 $ORIGIN {domain}.
 $TTL 86400          ; default time to live
 
-@ IN SOA ns1.{primary_domain}. hostmaster.{primary_domain}. (
+@ IN SOA dns1.{primary_domain}. hostmaster.{primary_domain}. (
            __SERIAL__     ; serial number
            7200     ; Refresh (secondary nameserver update interval)
            86400    ; Retry (when refresh fails, how often to try again)
