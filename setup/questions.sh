@@ -95,7 +95,6 @@ address, so we're suggesting $DEFAULT_DOMAIN_GUESS.
 		# user hit ESC/cancel
 		exit
 	fi
-fi
 
 # If the machine is behind a NAT, inside a VM, etc., it may not know
 # its IP address on the public network / the Internet. Ask the Internet
