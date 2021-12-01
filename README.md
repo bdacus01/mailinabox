@@ -1,6 +1,7 @@
 Mail-in-a-Box - Debian Edition
 =============
 Updated for Debian by [@bdacus01](https://github.com/bdacus01) **This Project is unsuported by me or Mail-in-a-Box.**  Issues will be ingnored.
+I have stopped making updates to this Project as of 12-1-2021.
 
 Original By [@JoshData](https://github.com/JoshData) and [contributors](https://github.com/mail-in-a-box/mailinabox/graphs/contributors).
 Please check out their original project.
