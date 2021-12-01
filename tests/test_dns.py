@@ -22,7 +22,7 @@ if len(sys.argv) == 4:
 def test(server, description):
 	tests = [
 		(hostname, "A", ipaddr),
-		#(hostname, "NS", "dns1.%s.;ns2.%s." % (primary_hostname, primary_hostname)),
+		#(hostname, "NS", "dns1.%s.;dns2.%s." % (primary_hostname, primary_hostname)),
 		("dns1." + primary_hostname, "A", ipaddr),
 		("dns2." + primary_hostname, "A", ipaddr),
 		("www." + hostname, "A", ipaddr),
