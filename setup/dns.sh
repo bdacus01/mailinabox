@@ -42,7 +42,7 @@ server:
   ip-transparent: yes
 
 EOF
-
+#NSD bug dirs are not owned by nsd user
 chown -R nsd:nsd /var/run/nsd
 chown -R nsd:nsd /etc/nsd
 
