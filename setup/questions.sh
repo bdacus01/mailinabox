@@ -64,7 +64,7 @@ you really want.
 
 		# Take the part after the @-sign as the user's domain name, and add
 		# 'box.' to the beginning to create a default hostname for this machine.
-		DEFAULT_PRIMARY_HOSTNAME=mx.$DEFAULT_DOMAIN_GUESS
+		DEFAULT_PRIMARY_HOSTNAME=mx.$(echo $EMAIL_ADDR | sed 's/.*@//')
 	fi
 
 	input_box "Hostname" \
