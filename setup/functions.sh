@@ -62,6 +62,11 @@ function get_default_hostname {
 	printf '%s\n' "$1" # return this value
 }
 
+function get_default_domainname {
+	set -- "$(hostname -d 2>/dev/null)"
+	printf '%s\n' "$1" # return this value
+}
+
 function get_publicip_from_web_service {
 	# This seems to be the most reliable way to determine the
 	# machine's public IP address: asking a very nice web API
