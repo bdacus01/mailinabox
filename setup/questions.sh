@@ -82,6 +82,21 @@ address, so we're suggesting $DEFAULT_PRIMARY_HOSTNAME.
 	fi
 fi
 
+	input_box "Domainname" \
+		"This box needs a Domain name. The name will form a part of the box's web address.
+\n\nWe recommend that the name be a subdomain of the domain in your email
+address, so we're suggesting $DEFAULT_DOMAIN_GUESS.
+\n\nYou can change it, but we recommend you don't.
+\n\nHostname:" \
+		$DEFAULT_DOMAIN_GUESS \
+		PRIMARY_DOMAINNAME
+
+	if [ -z "$PRIMARY_DOMAINNAME" ]; then
+		# user hit ESC/cancel
+		exit
+	fi
+fi
+
 # If the machine is behind a NAT, inside a VM, etc., it may not know
 # its IP address on the public network / the Internet. Ask the Internet
 # and possibly confirm with user.
